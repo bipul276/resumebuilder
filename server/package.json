@@ -1,0 +1,44 @@
+{
+    "name": "@resumebuilder/server",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "dist/index.js",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "db:setup": "tsx src/db/setup.ts"
+    },
+    "dependencies": {
+        "@google/generative-ai": "^0.24.1",
+        "@resumebuilder/shared": "*",
+        "bcryptjs": "^3.0.3",
+        "cors": "^2.8.5",
+        "docx": "^9.5.1",
+        "dotenv": "^17.2.3",
+        "express": "^4.18.2",
+        "express-rate-limit": "^8.2.1",
+        "helmet": "^8.1.0",
+        "jsonwebtoken": "^9.0.3",
+        "nodemailer": "^7.0.12",
+        "pg": "^8.17.2",
+        "puppeteer": "^21.7.0",
+        "razorpay": "^2.9.6"
+    },
+    "devDependencies": {
+        "@types/bcryptjs": "^2.4.6",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/node": "^20.10.6",
+        "@types/nodemailer": "^7.0.5",
+        "@types/pg": "^8.16.0",
+        "@types/supertest": "^6.0.3",
+        "supertest": "^7.2.2",
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.3",
+        "vitest": "^1.1.3"
+    }
+}

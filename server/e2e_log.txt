@@ -1,0 +1,23 @@
+🧪 Starting E2E Feature Verification...
+
+--- Testing test_free@example.com (free) ---
+✓ Sandbox PDF: Success (158243 bytes)
+✓ Template PDF: Success (19041 bytes) - No tier check expected
+✓ AI Improve: Blocked (Expected 403)
+✓ Analytics: Blocked (Expected 403)
+
+
+--- Testing test_pro@example.com (pro) ---
+✓ Sandbox PDF: Success (14012 bytes)
+✓ Template PDF: Success (18649 bytes) - No tier check expected
+✓ AI Improve: Blocked (Expected 403)
+✓ Analytics: Blocked (Expected 403)
+
+
+--- Testing test_pro_plus@example.com (pro_plus) ---
+✓ Sandbox PDF: Success (14012 bytes)
+✓ Template PDF: Success (19055 bytes) - No tier check expected
+✓ AI Improve: Passed Tier Check (500 Error - API Key issue?)
+? Analytics: Status 500 - {"error":"Failed to fetch stats"}
+
+

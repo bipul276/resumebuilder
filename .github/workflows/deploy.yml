@@ -1,0 +1,22 @@
+name: Deploy Resume Builder
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/bipul/resumebuilder
+            git pull origin main
+            npm install
+            npm run build --workspace=client
+            npm run build --workspace=server
+            cd server
+            pm2 restart resumebuilder-api

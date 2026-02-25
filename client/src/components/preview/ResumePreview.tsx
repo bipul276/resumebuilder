@@ -107,7 +107,7 @@ export function ResumePreview() {
                         ref={iframeRef}
                         className="preview-frame"
                         title="Resume Preview"
-                        sandbox="allow-same-origin"
+                        sandbox="allow-same-origin allow-scripts"
                     />
                 ) : (
                     <div style={{

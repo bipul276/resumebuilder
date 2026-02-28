@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { PenTool, Rocket, Bot } from 'lucide-react';
 
@@ -9,6 +9,7 @@ const RAZORPAY_PRO_PLUS_LINK = 'https://rzp.io/rzp/resume-plus';
 
 export function PricingPage() {
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     return (
         <div style={{
@@ -231,7 +232,7 @@ export function PricingPage() {
                         </ul>
 
                         <a
-                            href={user?.tier === 'pro' || user?.tier === 'pro_plus' ? '#' : RAZORPAY_PRO_LINK}
+                            href={user ? (user.tier === 'pro' || user.tier === 'pro_plus' ? '#' : RAZORPAY_PRO_LINK) : '#'}
                             style={{
                                 display: 'block',
                                 width: '100%',
@@ -250,7 +251,12 @@ export function PricingPage() {
                                 zIndex: 1
                             }}
                             onClick={(e) => {
-                                if (user?.tier === 'pro' || user?.tier === 'pro_plus') {
+                                if (!user) {
+                                    e.preventDefault();
+                                    navigate('/login');
+                                    return;
+                                }
+                                if (user.tier === 'pro' || user.tier === 'pro_plus') {
                                     e.preventDefault();
                                 }
                             }}
@@ -333,7 +339,7 @@ export function PricingPage() {
                         </ul>
 
                         <a
-                            href={user?.tier === 'pro_plus' ? '#' : RAZORPAY_PRO_PLUS_LINK}
+                            href={user ? (user.tier === 'pro_plus' ? '#' : RAZORPAY_PRO_PLUS_LINK) : '#'}
                             style={{
                                 display: 'block',
                                 width: '100%',
@@ -352,7 +358,12 @@ export function PricingPage() {
                                 zIndex: 1
                             }}
                             onClick={(e) => {
-                                if (user?.tier === 'pro_plus') {
+                                if (!user) {
+                                    e.preventDefault();
+                                    navigate('/login');
+                                    return;
+                                }
+                                if (user.tier === 'pro_plus') {
                                     e.preventDefault();
                                 }
                             }}

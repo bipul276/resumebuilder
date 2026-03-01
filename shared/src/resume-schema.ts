@@ -128,7 +128,7 @@ export interface ResumeSettings {
     primaryColor: string;
     showIcons: boolean;
     useFullUrls: boolean;
-    margin: number;
+    margin: { top: number; right: number; bottom: number; left: number };
     sectionOrder: SectionType[];
 }
 
@@ -221,7 +221,7 @@ export function createEmptyResume(): ResumeData {
             primaryColor: '#2563eb',
             showIcons: true,
             useFullUrls: true,
-            margin: 18,
+            margin: { top: 18, right: 18, bottom: 18, left: 18 },
             sectionOrder: ['summary', 'workExperience', 'education', 'skills', 'projects', 'certifications'],
         },
     };

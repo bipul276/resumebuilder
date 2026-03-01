@@ -25,6 +25,21 @@ function formatDisplayUrl(url: string): string {
   return url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 }
 
+function ensureHttps(url: string | undefined): string {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `https://${url}`;
+}
+
+type MarginObj = { top: number; right: number; bottom: number; left: number };
+function getMarginStyle(margin?: MarginObj | number, fallback: number = 20): string {
+  if (typeof margin === 'object' && margin !== null) {
+    return `${margin.top}mm ${margin.right}mm ${margin.bottom}mm ${margin.left}mm`;
+  }
+  const m = margin !== undefined && typeof margin === 'number' ? margin : fallback;
+  return `${m}mm`;
+}
+
 function getSectionOrder(data: ResumeData): SectionType[] {
   return data.settings?.sectionOrder || ['summary', 'workExperience', 'education', 'skills', 'projects', 'certifications'];
 }
@@ -83,8 +98,8 @@ export function renderGlanceTemplate(data: ResumeData): string {
     html,body{width:210mm;min-height:297mm;font-family:'Outfit',sans-serif;font-size:10pt;line-height:1.6;color:#333;background:#fff}
     @page{size:A4;margin:0}
     .container{display:grid;grid-template-columns:80mm 1fr;min-height:297mm}
-    .sidebar{background:#f8fafc;padding:${settings?.margin || 20}mm;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;align-items:center;text-align:center}
-    .main{padding:${settings?.margin || 20}mm}
+    .sidebar{background:#f8fafc;padding:${getMarginStyle(settings?.margin, 20)};border-right:1px solid #e2e8f0;display:flex;flex-direction:column;align-items:center;text-align:center}
+    .main{padding:${getMarginStyle(settings?.margin, 20)}}
     .photo{width:140px;height:140px;border-radius:50%;object-fit:cover;margin-bottom:20px;border:4px solid #fff;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1)}
     .name{font-size:24pt;font-weight:700;line-height:1.2;margin-bottom:8px;color:#1e293b}
     .title{font-size:11pt;color:var(--accent);font-weight:500;margin-bottom:24px;text-transform:uppercase;letter-spacing:1px}
@@ -118,9 +133,9 @@ export function renderGlanceTemplate(data: ResumeData): string {
         ${personalInfo.email ? `<div class="contact-item">✉️ ${escapeHtml(personalInfo.email)}</div>` : ''}
         ${personalInfo.phone ? `<div class="contact-item">📱 ${escapeHtml(personalInfo.phone)}</div>` : ''}
         ${personalInfo.location ? `<div class="contact-item">📍 ${escapeHtml(personalInfo.location)}</div>` : ''}
-        ${personalInfo.linkedIn ? `<div class="contact-item">🔗 <a href="${escapeHtml(personalInfo.linkedIn)}" style="color:inherit;text-decoration:none">${(settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.linkedIn)) : 'LinkedIn'}</a></div>` : ''}
-        ${personalInfo.github ? `<div class="contact-item">💻 <a href="${escapeHtml(personalInfo.github)}" style="color:inherit;text-decoration:none">${(settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.github)) : 'GitHub'}</a></div>` : ''}
-        ${personalInfo.portfolio ? `<div class="contact-item">🌐 <a href="${escapeHtml(personalInfo.portfolio)}" style="color:inherit;text-decoration:none">${(settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.portfolio)) : 'Portfolio'}</a></div>` : ''}
+        ${personalInfo.linkedIn ? `<div class="contact-item">🔗 <a href="${escapeHtml(ensureHttps(personalInfo.linkedIn))}" style="color:inherit;text-decoration:none">${(settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.linkedIn)) : 'LinkedIn'}</a></div>` : ''}
+        ${personalInfo.github ? `<div class="contact-item">💻 <a href="${escapeHtml(ensureHttps(personalInfo.github))}" style="color:inherit;text-decoration:none">${(settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.github)) : 'GitHub'}</a></div>` : ''}
+        ${personalInfo.portfolio ? `<div class="contact-item">🌐 <a href="${escapeHtml(ensureHttps(personalInfo.portfolio))}" style="color:inherit;text-decoration:none">${(settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.portfolio)) : 'Portfolio'}</a></div>` : ''}
       </div>
 
       ${skills.length > 0 ? `<div class="sidebar-section"><div class="sidebar-title">Skills</div>
@@ -164,7 +179,7 @@ export function renderIdentityTemplate(data: ResumeData): string {
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{--accent:${accent}}
-    html,body{width:210mm;min-height:297mm;font-family:'Manrope',sans-serif;font-size:10pt;line-height:1.5;color:#1f2937;background:#fff;padding:${settings?.margin || 20}mm}
+    html,body{width:210mm;min-height:297mm;font-family:'Manrope',sans-serif;font-size:10pt;line-height:1.5;color:#1f2937;background:#fff;padding:${getMarginStyle(settings?.margin, 20)}}
     @page{size:A4;margin:0}
     .header{display:flex;align-items:center;gap:24px;margin-bottom:32px;border-bottom:2px solid #f3f4f6;padding-bottom:24px}
     .photo{width:100px;height:100px;border-radius:12px;object-fit:cover;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1)}
@@ -199,9 +214,9 @@ export function renderIdentityTemplate(data: ResumeData): string {
       personalInfo.email,
       personalInfo.phone,
       personalInfo.location,
-      personalInfo.linkedIn ? `<a href="${escapeHtml(personalInfo.linkedIn)}" style="color:inherit;text-decoration:none">${(data.settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.linkedIn)) : 'LinkedIn'}</a>` : '',
-      personalInfo.github ? `<a href="${escapeHtml(personalInfo.github)}" style="color:inherit;text-decoration:none">${(data.settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.github)) : 'GitHub'}</a>` : '',
-      personalInfo.portfolio ? `<a href="${escapeHtml(personalInfo.portfolio)}" style="color:inherit;text-decoration:none">${(data.settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.portfolio)) : 'Portfolio'}</a>` : ''
+      personalInfo.linkedIn ? `<a href="${escapeHtml(ensureHttps(personalInfo.linkedIn))}" style="color:inherit;text-decoration:none">${(data.settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.linkedIn)) : 'LinkedIn'}</a>` : '',
+      personalInfo.github ? `<a href="${escapeHtml(ensureHttps(personalInfo.github))}" style="color:inherit;text-decoration:none">${(data.settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.github)) : 'GitHub'}</a>` : '',
+      personalInfo.portfolio ? `<a href="${escapeHtml(ensureHttps(personalInfo.portfolio))}" style="color:inherit;text-decoration:none">${(data.settings?.useFullUrls ?? true) ? escapeHtml(formatDisplayUrl(personalInfo.portfolio)) : 'Portfolio'}</a>` : ''
     ].filter(Boolean).join(' • ')}</div>
     </div>
   </header>

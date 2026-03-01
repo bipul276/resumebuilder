@@ -111,6 +111,19 @@ export function SettingsForm() {
         }
     };
 
+    const currentMargin = useMemo(() => {
+        if (typeof settings.margin === 'object' && settings.margin !== null) {
+            return settings.margin;
+        }
+        const m = typeof settings.margin === 'number' ? settings.margin : 18;
+        return { top: m, right: m, bottom: m, left: m };
+    }, [settings.margin]);
+
+    const handleMarginChange = (side: 'top' | 'right' | 'bottom' | 'left', value: number) => {
+        const newMargin = { ...currentMargin, [side]: value };
+        updateSettings('margin', newMargin as any);
+    };
+
     return (
         <div className="fade-in">
             <div className="form-section">
@@ -192,23 +205,49 @@ export function SettingsForm() {
                 </div>
 
                 <div className="form-row">
-                    <div className="form-group">
-                        <label className="form-label">Page Margin ({settings.margin || 18}mm)</label>
-                        <input
-                            type="range"
-                            min="10"
-                            max="30"
-                            step="1"
-                            value={settings.margin || 18}
-                            onChange={(e) => updateSettings('margin', parseInt(e.target.value))}
-                            style={{ width: '100%', cursor: 'pointer', marginTop: '8px' }}
-                        />
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
-                            <span>Wide (30mm)</span>
+                    <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                        <label className="form-label" style={{ marginBottom: '12px', display: 'block' }}>Page Margins</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                            <div>
+                                <label style={{ fontSize: '12px', color: 'var(--color-text-secondary)', display: 'block', marginBottom: '4px' }}>Top: {currentMargin.top}mm</label>
+                                <input
+                                    type="range" min="0" max="30" step="1"
+                                    value={currentMargin.top}
+                                    onChange={(e) => handleMarginChange('top', parseInt(e.target.value))}
+                                    style={{ width: '100%', cursor: 'pointer' }}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ fontSize: '12px', color: 'var(--color-text-secondary)', display: 'block', marginBottom: '4px' }}>Bottom: {currentMargin.bottom}mm</label>
+                                <input
+                                    type="range" min="0" max="30" step="1"
+                                    value={currentMargin.bottom}
+                                    onChange={(e) => handleMarginChange('bottom', parseInt(e.target.value))}
+                                    style={{ width: '100%', cursor: 'pointer' }}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ fontSize: '12px', color: 'var(--color-text-secondary)', display: 'block', marginBottom: '4px' }}>Left: {currentMargin.left}mm</label>
+                                <input
+                                    type="range" min="0" max="30" step="1"
+                                    value={currentMargin.left}
+                                    onChange={(e) => handleMarginChange('left', parseInt(e.target.value))}
+                                    style={{ width: '100%', cursor: 'pointer' }}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ fontSize: '12px', color: 'var(--color-text-secondary)', display: 'block', marginBottom: '4px' }}>Right: {currentMargin.right}mm</label>
+                                <input
+                                    type="range" min="0" max="30" step="1"
+                                    value={currentMargin.right}
+                                    onChange={(e) => handleMarginChange('right', parseInt(e.target.value))}
+                                    style={{ width: '100%', cursor: 'pointer' }}
+                                />
+                            </div>
                         </div>
                     </div>
 
-                    <div className="form-group" style={{ marginTop: '16px' }}>
+                    <div className="form-group" style={{ marginTop: '16px', gridColumn: '1 / -1' }}>
                         <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                             <input
                                 type="checkbox"

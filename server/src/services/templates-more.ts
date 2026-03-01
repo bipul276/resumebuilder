@@ -25,6 +25,15 @@ function formatDisplayUrl(url: string): string {
   return url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 }
 
+type MarginObj = { top: number; right: number; bottom: number; left: number };
+function getMarginStyle(margin?: MarginObj | number, fallback: number = 20): string {
+  if (typeof margin === 'object' && margin !== null) {
+    return `${margin.top}mm ${margin.right}mm ${margin.bottom}mm ${margin.left}mm`;
+  }
+  const m = margin !== undefined && typeof margin === 'number' ? margin : fallback;
+  return `${m}mm`;
+}
+
 function getSectionOrder(data: ResumeData): SectionType[] {
   return data.settings?.sectionOrder || ['summary', 'workExperience', 'education', 'skills', 'projects', 'certifications'];
 }
@@ -77,7 +86,7 @@ export function renderElegantTemplate(data: ResumeData): string {
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:210mm;min-height:297mm;font-family:'Montserrat',sans-serif;font-size:10pt;line-height:1.6;color:#374151;background:#fff;padding:${data.settings?.margin || 20}mm}
+    html,body{width:210mm;min-height:297mm;font-family:'Montserrat',sans-serif;font-size:10pt;line-height:1.6;color:#374151;background:#fff;padding:${getMarginStyle(data.settings?.margin, 20)}}
     @page{size:A4;margin:0}
     .header{text-align:center;margin-bottom:28px}
     .name{font-family:'Cormorant Garamond',serif;font-size:36pt;font-weight:700;color:#111827;letter-spacing:3px;text-transform:uppercase}
@@ -153,11 +162,11 @@ export function renderBoldTemplate(data: ResumeData): string {
     :root{--accent:${accent}}
     html,body{width:210mm;min-height:297mm;font-family:'Open Sans',sans-serif;font-size:10pt;line-height:1.5;color:#1f2937;background:#fff;padding:0}
     @page{size:A4;margin:0}
-    .header{background:var(--accent);color:#fff;padding:${settings?.margin || 20}mm;margin-bottom:20px}
+    .header{background:var(--accent);color:#fff;padding:${getMarginStyle(settings?.margin, 20)};margin-bottom:20px}
     .name{font-family:'Oswald',sans-serif;font-size:36pt;font-weight:700;text-transform:uppercase;letter-spacing:2px}
     .title{font-size:14pt;opacity:0.9;margin-top:4px}
     .contact{margin-top:12px;font-size:10pt;opacity:0.9}
-    .main{padding:0 ${settings?.margin || 20}mm ${settings?.margin || 20}mm}
+    .main{padding:0 ${typeof settings?.margin === 'object' ? settings.margin.right : (settings?.margin || 20)}mm ${typeof settings?.margin === 'object' ? settings.margin.bottom : (settings?.margin || 20)}mm ${typeof settings?.margin === 'object' ? settings.margin.left : (settings?.margin || 20)}mm}
     .section{margin-bottom:20px}
     .section-title{font-family:'Oswald',sans-serif;font-size:16pt;font-weight:600;text-transform:uppercase;color:var(--accent);border-bottom:3px solid var(--accent);padding-bottom:4px;margin-bottom:12px}
     .entry{margin-bottom:14px}
@@ -220,7 +229,7 @@ export function renderSimpleTemplate(data: ResumeData): string {
   <meta charset="UTF-8"><title>${escapeHtml(fullName)} - Resume</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:210mm;min-height:297mm;font-family:Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.5;color:#000;background:#fff;padding:${data.settings?.margin || 18}mm}
+    html,body{width:210mm;min-height:297mm;font-family:Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.5;color:#000;background:#fff;padding:${getMarginStyle(data.settings?.margin, 18)}}
     @page{size:A4;margin:0}
     .name{font-size:24pt;font-weight:bold;margin-bottom:4px}
     .contact{font-size:10pt;color:#444;margin-bottom:16px}
@@ -280,7 +289,7 @@ export function renderAcademicTemplate(data: ResumeData): string {
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:210mm;min-height:297mm;font-family:'EB Garamond',Georgia,serif;font-size:11pt;line-height:1.6;color:#1a1a1a;background:#fff;padding:${data.settings?.margin || 20}mm}
+    html,body{width:210mm;min-height:297mm;font-family:'EB Garamond',Georgia,serif;font-size:11pt;line-height:1.6;color:#1a1a1a;background:#fff;padding:${getMarginStyle(data.settings?.margin, 20)}}
     @page{size:A4;margin:0}
     .header{text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #333}
     .name{font-size:24pt;font-weight:700;letter-spacing:1px}

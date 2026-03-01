@@ -36,6 +36,7 @@ interface SortableSectionItemProps {
 }
 
 function SortableSectionItem({ section }: SortableSectionItemProps) {
+    const { resume } = useResumeStore();
     const {
         attributes,
         listeners,
@@ -52,7 +53,18 @@ function SortableSectionItem({ section }: SortableSectionItemProps) {
         zIndex: isDragging ? 1000 : 1,
     };
 
-    const info = SECTION_INFO[section];
+    const isCustom = section.startsWith('custom_');
+    let label = 'Unknown Section';
+    let icon: React.ReactNode = <FileText size={18} />;
+
+    if (isCustom) {
+        const customId = section.replace('custom_', '');
+        const customSection = resume.customSections?.find(s => s.id === customId);
+        label = customSection?.title || 'Custom Section';
+    } else if (SECTION_INFO[section]) {
+        label = SECTION_INFO[section].label;
+        icon = SECTION_INFO[section].icon;
+    }
 
     return (
         <div
@@ -68,8 +80,8 @@ function SortableSectionItem({ section }: SortableSectionItemProps) {
             >
                 <GripVertical size={18} />
             </span>
-            <span className="section-icon">{info.icon}</span>
-            <span className="section-label">{info.label}</span>
+            <span className="section-icon">{icon}</span>
+            <span className="section-label">{label}</span>
         </div>
     );
 }

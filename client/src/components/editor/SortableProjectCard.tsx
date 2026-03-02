@@ -156,8 +156,37 @@ export function SortableProjectCard({
                         onChange={(e) => onUpdate(project.id, 'liveUrl', e.target.value)}
                         disabled={!capabilities.projects.url}
                     />
-                    {(project.url && !project.liveUrl) && (
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>Legacy URL: {project.url}</div>
+                    {project.url && (
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px', padding: '8px', background: 'var(--color-bg)', borderRadius: '6px', border: '1px solid var(--color-border)', width: '200%' }}>
+                            <div style={{ marginBottom: '6px' }}>Legacy URL detected: <span style={{ color: 'var(--color-text)' }}>{project.url}</span></div>
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                                {!project.githubUrl && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            onUpdate(project.id, 'githubUrl', project.url);
+                                            onUpdate(project.id, 'url', '');
+                                        }}
+                                        style={{ background: 'none', border: 'none', color: 'var(--color-primary-light)', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}
+                                    >Move to GitHub</button>
+                                )}
+                                {!project.liveUrl && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            onUpdate(project.id, 'liveUrl', project.url);
+                                            onUpdate(project.id, 'url', '');
+                                        }}
+                                        style={{ background: 'none', border: 'none', color: 'var(--color-primary-light)', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}
+                                    >Move to Live</button>
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => onUpdate(project.id, 'url', '')}
+                                    style={{ background: 'none', border: 'none', color: 'var(--color-danger)', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}
+                                >Remove</button>
+                            </div>
+                        </div>
                     )}
                     {!capabilities.projects.url && renderDisabledOverlay("Not shown in current layout")}
                 </div>

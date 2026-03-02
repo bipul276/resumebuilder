@@ -171,7 +171,7 @@ export function renderBoldTemplate(data: ResumeData): string {
     .name{font-family:'Oswald',sans-serif;font-size:36pt;font-weight:700;text-transform:uppercase;letter-spacing:2px}
     .title{font-size:14pt;opacity:0.9;margin-top:4px}
     .contact{margin-top:12px;font-size:10pt;opacity:0.9}
-    .main{padding:0 ${typeof settings?.margin === 'object' ? settings.margin.right : (settings?.margin || 20)}mm ${typeof settings?.margin === 'object' ? settings.margin.bottom : (settings?.margin || 20)}mm ${typeof settings?.margin === 'object' ? settings.margin.left : (settings?.margin || 20)}mm}
+    .main{padding:0 ${typeof settings?.margin === 'object' ? (settings.margin as any).right : (settings?.margin || 20)}mm ${typeof settings?.margin === 'object' ? (settings.margin as any).bottom : (settings?.margin || 20)}mm ${typeof settings?.margin === 'object' ? (settings.margin as any).left : (settings?.margin || 20)}mm}
     .section{margin-bottom:20px}
     .section-title{font-family:'Oswald',sans-serif;font-size:16pt;font-weight:600;text-transform:uppercase;color:var(--accent);border-bottom:3px solid var(--accent);padding-bottom:4px;margin-bottom:12px}
     .entry{margin-bottom:14px}

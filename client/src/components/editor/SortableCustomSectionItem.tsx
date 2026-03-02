@@ -76,7 +76,7 @@ export const SortableCustomSectionItem: React.FC<Props> = ({
                 />
                 <input
                     type="text"
-                    placeholder="Description (optional)"
+                    placeholder="Description (optional) - Supports [Text](url)"
                     value={item.description || ''}
                     onChange={(e) => onUpdate(sectionId, item.id, 'description', e.target.value)}
                     className="form-input"
@@ -85,6 +85,7 @@ export const SortableCustomSectionItem: React.FC<Props> = ({
 
             {/* Bullet Points */}
             <div style={{ marginTop: 8 }}>
+                <div style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '8px' }}>Supports markdown links: [Text](https://url.com)</div>
                 {item.bullets.map((bullet, idx) => (
                     <div key={idx} style={{ display: 'flex', gap: 6, marginBottom: 4, alignItems: 'center' }}>
                         <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>•</span>

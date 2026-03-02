@@ -62,7 +62,12 @@ function escapeHtml(str: string | undefined): string {
 
 function formatDescription(str: string | undefined): string {
   if (!str) return '';
-  return escapeHtml(str).replace(/\n/g, '<br>');
+  return parseMarkdownLinks(escapeHtml(str)).replace(/\n/g, '<br>');
+}
+
+function parseMarkdownLinks(str: string): string {
+  if (!str) return '';
+  return str.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">$1</a>');
 }
 
 function formatDate(dateStr: string | undefined): string {
@@ -139,7 +144,7 @@ function renderCustomSectionHtml(data: ResumeData, sectionKey: string): string {
           ${item.description ? `<p class="entry-description">${formatDescription(item.description)}</p>` : ''}
           ${item.bullets.filter((b: string) => b.trim()).length > 0 ? `
             <ul class="bullet-list">
-              ${item.bullets.filter((b: string) => b.trim()).map((b: string) => `<li>${escapeHtml(b)}</li>`).join('')}
+              ${item.bullets.filter((b: string) => b.trim()).map((b: string) => `<li>${parseMarkdownLinks(escapeHtml(b))}</li>`).join('')}
             </ul>
           ` : ''}
         </div>
@@ -209,7 +214,7 @@ function renderClassicSection(sectionType: SectionType, data: ResumeData): strin
               </div>
               ${job.bullets.filter((b: string) => b.trim()).length > 0 ? `
                 <ul class="bullet-list">
-                  ${job.bullets.filter((b: string) => b.trim()).map((b: string) => `<li>${escapeHtml(b)}</li>`).join('')}
+                  ${job.bullets.filter((b: string) => b.trim()).map((b: string) => `<li>${parseMarkdownLinks(escapeHtml(b))}</li>`).join('')}
                 </ul>
               ` : ''}
             </div>
@@ -226,10 +231,19 @@ function renderClassicSection(sectionType: SectionType, data: ResumeData): strin
             <div class="entry">
               <div class="entry-header">
                 <div class="entry-left">
-                  ${project.url ?
-          `<a href="${escapeHtml(project.url)}" target="_blank" class="entry-title entry-title-link">${escapeHtml(project.name)}</a>` :
-          `<span class="entry-title">${escapeHtml(project.name)}</span>`
+                  <span class="entry-title">
+                    ${project.url && !project.githubUrl && !project.liveUrl ?
+          `<a href="${escapeHtml(project.url)}" target="_blank" class="entry-title-link">${escapeHtml(project.name)}</a>` :
+          escapeHtml(project.name)
         }
+                  </span>
+                  ${(project.githubUrl || project.liveUrl) ? `
+                    <span style="font-size: 0.9em; margin-left: 8px;">
+                      ${project.githubUrl ? `<a href="${escapeHtml(project.githubUrl)}" target="_blank" style="color: var(--accent); text-decoration: none;">${data.settings?.useFullUrls ? escapeHtml(project.githubUrl.replace(/^https?:\/\//, '')) : 'GitHub'}</a>` : ''}
+                      ${project.githubUrl && project.liveUrl ? `<span style="color: var(--border); margin: 0 4px;">|</span>` : ''}
+                      ${project.liveUrl ? `<a href="${escapeHtml(project.liveUrl)}" target="_blank" style="color: var(--accent); text-decoration: none;">${data.settings?.useFullUrls ? escapeHtml(project.liveUrl.replace(/^https?:\/\//, '')) : 'Live Demo'}</a>` : ''}
+                    </span>
+                  ` : ''}
                 </div>
               </div>
               ${project.description ? `<p class="entry-description">${formatDescription(project.description)}</p>` : ''}
@@ -557,7 +571,7 @@ function renderModernMainSection(sectionType: SectionType, data: ResumeData): st
               </div>
               ${job.bullets.filter((b: string) => b.trim()).length > 0 ? `
                 <ul class="bullet-list">
-                  ${job.bullets.filter((b: string) => b.trim()).map((b: string) => `<li>${escapeHtml(b)}</li>`).join('')}
+                  ${job.bullets.filter((b: string) => b.trim()).map((b: string) => `<li>${parseMarkdownLinks(escapeHtml(b))}</li>`).join('')}
                 </ul>
               ` : ''}
             </div>
@@ -574,10 +588,17 @@ function renderModernMainSection(sectionType: SectionType, data: ResumeData): st
             <div class="entry">
               <div class="entry-header">
                 <div class="entry-title">
-                  ${project.url ?
+                  ${project.url && !project.githubUrl && !project.liveUrl ?
           `<a href="${escapeHtml(project.url)}" target="_blank" style="color: inherit; text-decoration: none;">${escapeHtml(project.name)}</a>` :
           escapeHtml(project.name)
         }
+                  ${(project.githubUrl || project.liveUrl) ? `
+                    <span style="font-size: 0.85em; margin-left: 8px; font-weight: normal;">
+                      ${project.githubUrl ? `<a href="${escapeHtml(project.githubUrl)}" target="_blank" style="color: var(--text-secondary); text-decoration: none;">${data.settings?.useFullUrls ? escapeHtml(project.githubUrl.replace(/^https?:\/\//, '')) : 'GitHub'}</a>` : ''}
+                      ${project.githubUrl && project.liveUrl ? `<span style="color: var(--border); margin: 0 4px;">|</span>` : ''}
+                      ${project.liveUrl ? `<a href="${escapeHtml(project.liveUrl)}" target="_blank" style="color: var(--text-secondary); text-decoration: none;">${data.settings?.useFullUrls ? escapeHtml(project.liveUrl.replace(/^https?:\/\//, '')) : 'Live Demo'}</a>` : ''}
+                    </span>
+                  ` : ''}
                 </div>
               </div>
               ${project.description ? `<p class="summary-text" style="margin-bottom: 8px;">${formatDescription(project.description)}</p>` : ''}

@@ -180,7 +180,10 @@ export function SortableExperienceCard({
 
             <div className="form-group">
                 <label className="form-label" style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span>Bullet Points</span>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span>Bullet Points</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'normal', marginTop: '2px' }}>Supports markdown links: [Text](https://url.com)</span>
+                    </div>
                     <button
                         className="btn btn-ghost btn-sm"
                         onClick={() => onAddBullet(exp.id)}

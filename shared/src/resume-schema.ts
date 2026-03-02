@@ -76,6 +76,8 @@ export interface Project {
     name: string;
     description?: string;
     url?: string;
+    githubUrl?: string;
+    liveUrl?: string;
     technologies: string[];
     startDate?: string;
     endDate?: string;

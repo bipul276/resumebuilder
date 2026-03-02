@@ -471,6 +471,19 @@ body {
   cursor: pointer;
 }
 
+.template-select optgroup {
+  font-weight: 700;
+  color: var(--color-primary-light);
+  background: var(--color-bg-panel);
+}
+
+.template-select option {
+  font-weight: 400;
+  color: var(--color-text);
+  background: var(--color-bg-input);
+  padding: 8px;
+}
+
 .zoom-controls {
   display: flex;
   align-items: center;

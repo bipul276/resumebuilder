@@ -49,7 +49,7 @@ export function renderTechTemplate(data: ResumeData): string {
             </div>
             ${job.bullets.length > 0 ? `
               <ul class="bullets">
-                ${job.bullets.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join('')}
+                ${job.bullets.map(bullet => `<li>${parseMarkdownLinks(escapeHtml(bullet))}</li>`).join('')}
               </ul>
             ` : ''}
           </div>
@@ -66,10 +66,11 @@ export function renderTechTemplate(data: ResumeData): string {
           <div class="card">
             <div class="card-header">
               <div>
-                <div class="card-title">${project.url ? `<a href="${escapeHtml(project.url)}" style="color: inherit; text-decoration: none; border-bottom: 1px dashed var(--accent);">${escapeHtml(project.name)}</a>` : escapeHtml(project.name)}</div>
+                <div class="card-title">${project.url && !project.githubUrl && !project.liveUrl ? `<a href="${escapeHtml(project.url)}" style="color: inherit; text-decoration: none; border-bottom: 1px dashed var(--accent);">${escapeHtml(project.name)}</a>` : escapeHtml(project.name)}
+                ${(project.githubUrl || project.liveUrl) ? `<span style="font-size: 0.85em; margin-left: 8px; font-weight: normal;">${project.githubUrl ? `<a href="${escapeHtml(project.githubUrl)}" target="_blank" style="color: var(--accent); text-decoration: none;">${data.settings?.useFullUrls ? escapeHtml(project.githubUrl.replace(/^https?:\/\//, '')) : 'GitHub'}</a>` : ''}${project.githubUrl && project.liveUrl ? `<span style="color: #444; margin: 0 4px;">|</span>` : ''}${project.liveUrl ? `<a href="${escapeHtml(project.liveUrl)}" target="_blank" style="color: var(--accent); text-decoration: none;">${data.settings?.useFullUrls ? escapeHtml(project.liveUrl.replace(/^https?:\/\//, '')) : 'Live Demo'}</a>` : ''}</span>` : ''}</div>
               </div>
             </div>
-            ${project.description ? `<p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 8px;">${escapeHtml(project.description)}</p>` : ''}
+            ${project.description ? `<p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 8px;">${parseMarkdownLinks(escapeHtml(project.description))}</p>` : ''}
             ${project.technologies.length > 0 ? `
               <div class="project-tech">
                 ${project.technologies.map(tech => `<span class="tech-tag">${escapeHtml(tech)}</span>`).join('')}
@@ -139,8 +140,8 @@ export function renderTechTemplate(data: ResumeData): string {
               </div>
               ${item.date ? `<div class="card-meta">${formatDate(item.date)}</div>` : ''}
             </div>
-            ${item.description ? `<div style="font-size: 0.9em; color: var(--text-secondary); margin-top: 4px;">${escapeHtml(item.description)}</div>` : ''}
-            ${item.bullets.filter((b: string) => b.trim()).length > 0 ? `<ul style="margin: 4px 0 0 16px; padding: 0; color: var(--text-secondary); font-size: 0.9em;">${item.bullets.filter((b: string) => b.trim()).map((b: string) => `<li>${escapeHtml(b)}</li>`).join('')}</ul>` : ''}
+            ${item.description ? `<div style="font-size: 0.9em; color: var(--text-secondary); margin-top: 4px;">${parseMarkdownLinks(escapeHtml(item.description))}</div>` : ''}
+            ${item.bullets.filter((b: string) => b.trim()).length > 0 ? `<ul style="margin: 4px 0 0 16px; padding: 0; color: var(--text-secondary); font-size: 0.9em;">${item.bullets.filter((b: string) => b.trim()).map((b: string) => `<li>${parseMarkdownLinks(escapeHtml(b))}</li>`).join('')}</ul>` : ''}
           </div>
         `).join('')}
       </section>
@@ -409,6 +410,11 @@ function escapeHtml(str: string | undefined): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function parseMarkdownLinks(str: string): string {
+  if (!str) return '';
+  return str.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">$1</a>');
 }
 
 function formatDate(dateStr: string | undefined): string {

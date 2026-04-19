@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { LogOut, User as UserIcon, ChevronDown, PenTool, Rocket, Bot } from 'lucide-react';
 import { AnalyticsDashboard } from '../components/dashboard/AnalyticsDashboard';
 import { SubscriptionTimer } from '../components/SubscriptionTimer';
+import { ScrollBackground } from '../components/ScrollBackground';
 
 export function LandingPage() {
     const { user, logout } = useAuth();
@@ -12,10 +13,11 @@ export function LandingPage() {
     return (
         <div style={{
             minHeight: '100vh',
-            backgroundColor: '#000',
+            backgroundColor: 'transparent',
             color: '#fff',
             fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
         }}>
+            <ScrollBackground />
             {/* Navigation */}
             <nav style={{
                 position: 'fixed',
@@ -194,7 +196,7 @@ export function LandingPage() {
                 alignItems: 'center',
                 textAlign: 'center',
                 padding: '120px 24px 60px',
-                background: 'radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%)',
+                backgroundColor: 'transparent',
             }}>
                 <h1 style={{
                     fontSize: 'clamp(48px, 10vw, 96px)',
@@ -292,8 +294,8 @@ export function LandingPage() {
             {/* Template Preview Strip */}
             <section style={{
                 padding: '60px 24px 80px',
-                backgroundColor: '#000',
-                borderBottom: '1px solid #1c1c1e',
+                backgroundColor: 'transparent',
+                borderBottom: '1px solid rgba(255,255,255,0.05)',
             }}>
                 <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
                     <div style={{
@@ -433,8 +435,8 @@ export function LandingPage() {
             {/* How It Works Section */}
             <section style={{
                 padding: '56px 24px',
-                backgroundColor: '#000',
-                borderBottom: '1px solid #1c1c1e',
+                backgroundColor: 'transparent',
+                borderBottom: '1px solid rgba(255,255,255,0.05)',
             }}>
                 <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
                     <div style={{
@@ -485,7 +487,7 @@ export function LandingPage() {
             {/* Features Section */}
             <section id="features" style={{
                 padding: '120px 24px',
-                backgroundColor: '#0a0a0a',
+                backgroundColor: 'transparent',
             }}>
                 <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                     <h2 style={{
@@ -582,7 +584,7 @@ export function LandingPage() {
             {/* Pricing Section */}
             <section id="pricing" style={{
                 padding: '120px 24px',
-                backgroundColor: '#000',
+                backgroundColor: 'transparent',
             }}>
                 <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                     <h2 style={{

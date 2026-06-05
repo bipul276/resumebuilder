@@ -14,6 +14,7 @@ import { TermsOfServicePage } from './pages/legal/TermsOfServicePage';
 import { ContactUsPage } from './pages/legal/ContactUsPage';
 import { RefundPolicyPage } from './pages/legal/RefundPolicyPage';
 import { CompliancePage } from './pages/legal/CompliancePage';
+import { CookieBanner } from './components/common/CookieBanner';
 
 function App() {
     return (
@@ -37,6 +38,7 @@ function App() {
                         <Route path="/refund" element={<RefundPolicyPage />} />
                         <Route path="/compliance" element={<CompliancePage />} />
                     </Routes>
+                    <CookieBanner />
                 </BrowserRouter>
             </TierProvider>
         </AuthProvider>

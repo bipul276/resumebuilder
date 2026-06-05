@@ -8,7 +8,7 @@ import { ScrollBackground } from '../components/ScrollBackground';
 import { Footer } from '../components/common/Footer';
 
 export function LandingPage() {
-    const { user, logout } = useAuth();
+    const { user, logout, deleteAccount } = useAuth();
     const [showUserMenu, setShowUserMenu] = useState(false);
 
     return (
@@ -164,6 +164,39 @@ export function LandingPage() {
                                                 >
                                                     <LogOut size={14} />
                                                     Logout
+                                                </button>
+
+                                                <div style={{ height: '1px', backgroundColor: '#3f3f46', margin: '4px 0' }} />
+
+                                                <button
+                                                    onClick={async () => {
+                                                        if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+                                                            try {
+                                                                await deleteAccount();
+                                                            } catch (err) {
+                                                                alert("Failed to delete account. Please try again.");
+                                                            }
+                                                        }
+                                                    }}
+                                                    style={{
+                                                        width: '100%',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        padding: '8px 12px',
+                                                        color: '#ef4444',
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        fontSize: '13px',
+                                                        cursor: 'pointer',
+                                                        borderRadius: '6px',
+                                                        textAlign: 'left',
+                                                    }}
+                                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)'}
+                                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                                >
+                                                    <UserIcon size={14} />
+                                                    Delete Account
                                                 </button>
                                             </div>
                                         </div>

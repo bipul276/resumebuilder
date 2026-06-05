@@ -15,6 +15,7 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string, name?: string) => Promise<void>;
     logout: () => void;
+    deleteAccount: () => Promise<void>;
     refreshUser: () => Promise<void>;
 }
 
@@ -98,8 +99,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('token');
     };
 
+    const deleteAccount = async () => {
+        if (!token) return;
+
+        const response = await fetch(`${API_URL}/api/auth/me`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to delete account');
+        }
+
+        // Only clear token and user, do NOT clear local storage resume data
+        logout();
+    };
+
     return (
-        <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, refreshUser }}>
+        <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, deleteAccount, refreshUser }}>
             {children}
         </AuthContext.Provider>
     );

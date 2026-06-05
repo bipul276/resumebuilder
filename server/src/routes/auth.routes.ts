@@ -257,4 +257,23 @@ authRouter.post('/reset-password', async (req: Request, res: Response) => {
 });
 
 
+// DELETE /api/auth/me - Delete current user account (Right to Erasure)
+authRouter.delete('/me', authenticateToken, async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).userId;
+
+        // Delete user (cascade will handle related records in password_resets, payments, etc.)
+        const result = await query('DELETE FROM users WHERE id = $1 RETURNING id', [userId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        console.error('Delete user error:', error);
+        res.status(500).json({ error: 'Failed to delete account' });
+    }
+});
+
 export default authRouter;

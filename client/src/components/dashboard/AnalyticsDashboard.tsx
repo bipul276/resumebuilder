@@ -4,6 +4,8 @@ import { Eye, Download, Copy, TrendingUp, Calendar, BarChart3, ArrowRight, Link2
 import { useTier } from '../../contexts/TierContext';
 import { LockedFeaturePanel } from '../common/LockedFeaturePanel';
 import { Link } from 'react-router-dom';
+import { useResumeStore } from '../../stores/useResumeStore';
+import { useSandboxStore } from '../../stores/useSandboxStore';
 
 interface Stats {
     views: number;
@@ -23,6 +25,10 @@ export function AnalyticsDashboard() {
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Get anonymous resume IDs from both stores
+    const resumeId = useResumeStore((s) => s.resume.resumeId);
+    const sandboxResumeId = useSandboxStore((s) => s.data.resumeId);
+
     useEffect(() => {
         if (tier !== 'pro_plus') {
             setLoading(false);
@@ -31,11 +37,16 @@ export function AnalyticsDashboard() {
 
         const fetchStats = async () => {
             try {
-                const token = localStorage.getItem('token');
-                if (!token) return;
+                // Use resumeId from whichever editor has been used
+                const anonId = resumeId || sandboxResumeId;
+                if (!anonId) {
+                    setLoading(false);
+                    return;
+                }
 
-                const response = await axios.get(`${import.meta.env.VITE_API_URL || ''}/api/analytics/stats`, {
-                    headers: { Authorization: `Bearer ${token}` }
+                const API_URL = import.meta.env.VITE_API_URL || '';
+                const response = await axios.get(`${API_URL}/api/analytics/stats`, {
+                    params: { anon_id: anonId }
                 });
 
                 setStats(response.data.summary);
@@ -48,7 +59,7 @@ export function AnalyticsDashboard() {
         };
 
         fetchStats();
-    }, [tier]);
+    }, [tier, resumeId, sandboxResumeId]);
 
     if (tier !== 'pro_plus') {
         return (

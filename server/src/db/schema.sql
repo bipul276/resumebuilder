@@ -47,13 +47,15 @@ CREATE TABLE IF NOT EXISTS password_resets (
 -- Index for password resets
 CREATE INDEX IF NOT EXISTS idx_password_resets_user_id ON password_resets(user_id);
 
--- Analytics table
+-- Analytics table (supports both authenticated and anonymous tracking)
 CREATE TABLE IF NOT EXISTS resume_analytics (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,  -- nullable for anonymous tracking
+    anon_id VARCHAR(36),  -- UUID v4 for anonymous resume-level tracking
     event_type VARCHAR(50) NOT NULL, -- 'view', 'download', 'copy'
     metadata JSONB DEFAULT '{}',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_resume_analytics_user_id ON resume_analytics(user_id);
+CREATE INDEX IF NOT EXISTS idx_resume_analytics_anon_id ON resume_analytics(anon_id);

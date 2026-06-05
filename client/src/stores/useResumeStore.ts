@@ -12,7 +12,7 @@ import type {
     PageConstraint,
     SectionType
 } from '@resumebuilder/shared';
-import { createEmptyResume, generateId } from '@resumebuilder/shared';
+import { createEmptyResume, generateId, generateUUID } from '@resumebuilder/shared';
 
 interface ResumeStore {
     // State
@@ -597,7 +597,17 @@ export const useResumeStore = create<ResumeStore>()(
         }),
         {
             name: 'resume-storage',
+            version: 1, // Bumped for resumeId migration
             partialize: (state) => ({ resume: state.resume }),
+            migrate: (persistedState: any, version: number) => {
+                if (version === 0) {
+                    // Migration: add resumeId to existing resumes
+                    if (persistedState?.resume && !persistedState.resume.resumeId) {
+                        persistedState.resume.resumeId = generateUUID();
+                    }
+                }
+                return persistedState as any;
+            },
         }
     )
 );

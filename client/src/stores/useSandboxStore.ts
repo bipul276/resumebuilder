@@ -7,6 +7,7 @@ import {
     SandboxPage,
     ElementGroup,
     generateId,
+    generateUUID,
     createEmptySandbox,
     PAGE_SIZES,
     PageSize,
@@ -650,7 +651,19 @@ export const useSandboxStore = create<SandboxStore>()(
                     selectedIds: [],
                 }),
             }),
-            { name: 'resume-sandbox-storage-v2' }
+            {
+                name: 'resume-sandbox-storage-v2',
+                version: 1, // Bumped for resumeId migration
+                migrate: (persistedState: any, version: number) => {
+                    if (version === 0) {
+                        // Migration: add resumeId to existing sandbox data
+                        if (persistedState?.data && !persistedState.data.resumeId) {
+                            persistedState.data.resumeId = generateUUID();
+                        }
+                    }
+                    return persistedState as any;
+                },
+            }
         ),
         {
             limit: 100,

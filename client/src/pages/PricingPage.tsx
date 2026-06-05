@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { PenTool, Rocket, Bot } from 'lucide-react';
+import { Footer } from '../components/common/Footer';
 
 // REPLACE THESE WITH YOUR ACTUAL RAZORPAY PAYMENT PAGE URLs
 const RAZORPAY_PRO_LINK = 'https://rzp.io/rzp/resume-pro';
@@ -386,10 +387,11 @@ export function PricingPage() {
                     <p style={{ color: '#a0a0a6', lineHeight: 1.6 }}>
                         All plans are billed monthly. Cancel anytime.
                         🔒 Payments secured by Razorpay. Your data stays private — we never share your resume.
-                        Contact us at support@resumesandbox.com for help.
                     </p>
                 </div>
             </div>
+            
+            <Footer />
         </div>
     );
 }

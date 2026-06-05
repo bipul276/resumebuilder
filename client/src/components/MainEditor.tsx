@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
-import { Download, FileText, RotateCcw, Sparkles, Save, Upload, Palette, ChevronLeft } from 'lucide-react';
-import axios from 'axios';
+import { Download, FileText, RotateCcw, Sparkles, Save, Upload, Palette, ChevronLeft, ShieldCheck, Trash2 } from 'lucide-react';
 import { useResumeStore } from '../stores/useResumeStore';
+import { useAnalytics } from '../utils/useAnalytics';
 import { PersonalInfoForm } from './editor/PersonalInfoForm';
 import { WorkExperienceForm } from './editor/WorkExperienceForm';
 import { EducationForm } from './editor/EducationForm';
@@ -39,6 +39,7 @@ export function MainEditor() {
         resetResume,
     } = useResumeStore();
 
+    const { trackEvent } = useAnalytics(resume.resumeId);
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
     const updatePreview = useCallback(async () => {
@@ -72,19 +73,9 @@ export function MainEditor() {
         };
     }, [resume, updatePreview]);
 
-    // Track view on mount
+    // Track view on mount (anonymous)
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            // Use a timeout to avoid double-tracking in strict mode if possible, 
-            // or just accept it for now.
-            axios.post('/api/analytics/track', {
-                event_type: 'view',
-                metadata: { page: 'editor', source: 'main_editor' }
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
-            }).catch(err => console.error('Failed to track view:', err));
-        }
+        trackEvent('view', { page: 'editor', source: 'main_editor' });
     }, []);
 
     const handleDownloadPDF = async () => {
@@ -130,16 +121,8 @@ export function MainEditor() {
 
             toast.success('PDF downloaded successfully!');
 
-            // Track download
-            const token = localStorage.getItem('token');
-            if (token) {
-                axios.post('/api/analytics/track', {
-                    event_type: 'download',
-                    metadata: { type: 'resume_pdf', source: 'editor' }
-                }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                }).catch(err => console.error('Failed to track download:', err));
-            }
+            // Track download (anonymous)
+            trackEvent('download', { type: 'resume_pdf', source: 'editor' });
 
         } catch (error) {
             console.error('PDF download failed:', error);
@@ -157,6 +140,14 @@ export function MainEditor() {
         }
     };
 
+    const handleClearData = () => {
+        if (confirm('This will permanently erase all your resume data from this browser. Make sure you have downloaded your PDF or JSON first. Continue?')) {
+            localStorage.removeItem('resume-storage');
+            resetResume();
+            toast.success('All local data cleared');
+        }
+    };
+
     const handleExport = () => {
         const dataStr = JSON.stringify(resume, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
@@ -170,16 +161,8 @@ export function MainEditor() {
         URL.revokeObjectURL(url);
         toast.success('Resume data exported successfully!');
 
-        // Track copy (export json)
-        const token = localStorage.getItem('token');
-        if (token) {
-            axios.post('/api/analytics/track', {
-                event_type: 'copy',
-                metadata: { type: 'json_export', source: 'editor' }
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
-            }).catch(err => console.error('Failed to track copy:', err));
-        }
+        // Track copy/export (anonymous)
+        trackEvent('copy', { type: 'json_export', source: 'editor' });
     };
 
     const handleImport = () => {
@@ -243,6 +226,24 @@ export function MainEditor() {
                     <FileText size={28} />
                     <h1>Resume Builder</h1>
                     <SubscriptionTimer />
+
+                    {/* Privacy Badge */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        border: '1px solid rgba(16, 185, 129, 0.25)',
+                        fontSize: '11px',
+                        fontWeight: 500,
+                        color: '#34d399',
+                        whiteSpace: 'nowrap',
+                    }}>
+                        <ShieldCheck size={14} />
+                        Saved locally · No data leaves your device
+                    </div>
                 </div>
 
                 <div className="header-actions">
@@ -267,28 +268,38 @@ export function MainEditor() {
                             <RotateCcw size={16} />
                             Reset
                         </button>
+                        <button className="btn btn-ghost" onClick={handleClearData} title="Erase all local data (for public computers)" style={{ fontSize: '13px', color: '#ef4444' }}>
+                            <Trash2 size={16} />
+                            Clear Data
+                        </button>
                     </div>
 
                     <div style={{ width: '1px', height: '24px', background: '#e5e7eb', margin: '0 8px' }}></div>
 
-                    <button
-                        className="btn btn-primary"
-                        onClick={handleDownloadPDF}
-                        disabled={isGeneratingPDF || constraints?.status === 'overflow'}
-                        style={{ padding: '10px 24px', fontWeight: 600 }}
-                    >
-                        {isGeneratingPDF ? (
-                            <>
-                                <Sparkles size={18} className="animate-pulse" />
-                                Generating...
-                            </>
-                        ) : (
-                            <>
-                                <Download size={18} />
-                                Download PDF
-                            </>
-                        )}
-                    </button>
+                    {/* Cache Warning + Download */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                        <button
+                            className="btn btn-primary"
+                            onClick={handleDownloadPDF}
+                            disabled={isGeneratingPDF || constraints?.status === 'overflow'}
+                            style={{ padding: '10px 24px', fontWeight: 600 }}
+                        >
+                            {isGeneratingPDF ? (
+                                <>
+                                    <Sparkles size={18} className="animate-pulse" />
+                                    Generating...
+                                </>
+                            ) : (
+                                <>
+                                    <Download size={18} />
+                                    Download PDF
+                                </>
+                            )}
+                        </button>
+                        <span style={{ fontSize: '9px', color: '#9ca3af', maxWidth: '200px', textAlign: 'right', lineHeight: 1.3 }}>
+                            ⚠️ Don't clear browser cache until you download
+                        </span>
+                    </div>
                 </div>
             </header>
 

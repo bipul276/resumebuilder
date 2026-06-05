@@ -8,6 +8,13 @@ import { LoginPage } from './pages/LoginPage';
 import { PricingPage } from './pages/PricingPage';
 import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
 
+// Legal pages
+import { PrivacyPolicyPage } from './pages/legal/PrivacyPolicyPage';
+import { TermsOfServicePage } from './pages/legal/TermsOfServicePage';
+import { ContactUsPage } from './pages/legal/ContactUsPage';
+import { RefundPolicyPage } from './pages/legal/RefundPolicyPage';
+import { CompliancePage } from './pages/legal/CompliancePage';
+
 function App() {
     return (
         <AuthProvider>
@@ -22,6 +29,13 @@ function App() {
                         <Route path="/payment-success" element={<PaymentSuccessPage />} />
                         <Route path="/templates" element={<MainEditor />} />
                         <Route path="/sandbox" element={<SandboxEditor />} />
+                        
+                        {/* Legal Routes */}
+                        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                        <Route path="/terms" element={<TermsOfServicePage />} />
+                        <Route path="/contact" element={<ContactUsPage />} />
+                        <Route path="/refund" element={<RefundPolicyPage />} />
+                        <Route path="/compliance" element={<CompliancePage />} />
                     </Routes>
                 </BrowserRouter>
             </TierProvider>

@@ -9,6 +9,7 @@
 
 export interface ResumeData {
     id: string;
+    resumeId: string; // Anonymous UUID for analytics tracking — travels with JSON export/import
     createdAt: string;
     updatedAt: string;
     templateId: string;
@@ -201,6 +202,7 @@ export function createEmptyResume(): ResumeData {
     const now = new Date().toISOString();
     return {
         id: generateId(),
+        resumeId: generateUUID(),
         createdAt: now,
         updatedAt: now,
         templateId: 'modern',
@@ -481,6 +483,9 @@ export interface SemanticSection {
 
 // Main sandbox data structure
 export interface SandboxData {
+    // Anonymous UUID for analytics tracking — travels with JSON export/import
+    resumeId: string;
+
     // Multi-page support
     pages: SandboxPage[];
     currentPageIndex: number;
@@ -585,6 +590,7 @@ export function createEmptySandbox(): SandboxData {
     };
 
     return {
+        resumeId: generateUUID(),
         pages: [defaultPage],
         currentPageIndex: 0,
         elements: [],
@@ -618,6 +624,15 @@ export function createEmptySandbox(): SandboxData {
 
 export function generateId(): string {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/** Generate a UUID v4 for anonymous analytics tracking */
+export function generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
 }
 
 // Validation constraints

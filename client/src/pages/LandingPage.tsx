@@ -5,6 +5,7 @@ import { LogOut, User as UserIcon, ChevronDown, PenTool, Rocket, Bot } from 'luc
 import { AnalyticsDashboard } from '../components/dashboard/AnalyticsDashboard';
 import { SubscriptionTimer } from '../components/SubscriptionTimer';
 import { ScrollBackground } from '../components/ScrollBackground';
+import { Footer } from '../components/common/Footer';
 
 export function LandingPage() {
     const { user, logout } = useAuth();
@@ -893,7 +894,8 @@ export function LandingPage() {
                     </div>
                 </div>
             </section>
-
+            
+            <Footer />
         </div >
     );
 }

@@ -35,12 +35,14 @@ import {
     Target,
     GitBranch,
     FilePlus,
+    ShieldCheck,
+    Trash2,
 } from 'lucide-react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useStore } from 'zustand';
 import { useSandboxStore } from '../../stores/useSandboxStore';
 import { useTier, UserTier } from '../../contexts/TierContext';
+import { useAnalytics } from '../../utils/useAnalytics';
 
 type LeftPanelTab = 'tools' | 'assets' | 'sections' | 'styles' | 'layers' | 'components' | 'ats' | 'assist' | 'target' | 'versions';
 
@@ -62,6 +64,7 @@ export function SandboxEditor() {
     } = useSandboxStore();
 
     const tierCtx = useTier();
+    const { trackEvent } = useAnalytics(data.resumeId);
 
     const [isExporting, setIsExporting] = React.useState(false);
     const [leftTab, setLeftTab] = useState<LeftPanelTab>('tools');
@@ -174,17 +177,9 @@ export function SandboxEditor() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [handleKeyDown]);
 
-    // Track view on mount
+    // Track view on mount (anonymous)
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            axios.post(`${import.meta.env.VITE_API_URL || ''}/api/analytics/track`, {
-                event_type: 'view',
-                metadata: { page: 'sandbox', source: 'sandbox_editor' }
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
-            }).catch(err => console.error('Failed to track view:', err));
-        }
+        trackEvent('view', { page: 'sandbox', source: 'sandbox_editor' });
     }, []);
 
     const [showExportMenu, setShowExportMenu] = useState(false);
@@ -233,16 +228,8 @@ export function SandboxEditor() {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
 
-            // Track download
-            // token is already declared above
-            if (token) {
-                axios.post(`${import.meta.env.VITE_API_URL || ''}/api/analytics/track`, {
-                    event_type: 'download',
-                    metadata: { format, source: 'sandbox' }
-                }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                }).catch(err => console.error('Failed to track download:', err));
-            }
+            // Track download (anonymous)
+            trackEvent('download', { format, source: 'sandbox' });
 
         } catch (error) {
             console.error('Export failed:', error);
@@ -331,7 +318,46 @@ export function SandboxEditor() {
                     </span>
                     <SubscriptionTimer />
 
+                    {/* Privacy Badge */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '3px 10px',
+                        borderRadius: '16px',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        border: '1px solid rgba(16, 185, 129, 0.25)',
+                        fontSize: '10px',
+                        fontWeight: 500,
+                        color: '#34d399',
+                        whiteSpace: 'nowrap',
+                    }}>
+                        <ShieldCheck size={12} />
+                        Saved locally
+                    </div>
+
                     <div style={{ width: '1px', height: '24px', background: 'var(--color-border)', margin: '0 8px' }} />
+
+                    <button
+                        onClick={() => {
+                            if (confirm('This will erase all sandbox data from this browser. Make sure you have exported your work first. Continue?')) {
+                                localStorage.removeItem('resume-sandbox-storage-v2');
+                                useSandboxStore.getState().resetSandbox();
+                            }
+                        }}
+                        style={{
+                            ...buttonStyle,
+                            width: 'auto',
+                            padding: '6px 12px',
+                            gap: '6px',
+                            fontSize: '12px',
+                            color: '#ef4444',
+                        }}
+                        title="Erase all local sandbox data"
+                    >
+                        <Trash2 size={16} />
+                        Clear
+                    </button>
 
                     <button
                         onClick={handleNewResume}
@@ -450,6 +476,9 @@ export function SandboxEditor() {
                         <Download size={16} />
                         {isExporting ? 'Exporting...' : 'Export ▾'}
                     </button>
+                    <span style={{ position: 'absolute', top: '100%', right: 0, fontSize: '8px', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap', marginTop: '2px' }}>
+                        ⚠️ Download before clearing cache
+                    </span>
 
                     {showExportMenu && !isExporting && (
                         <div style={{

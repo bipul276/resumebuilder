@@ -14,18 +14,25 @@ export function CookieBanner() {
     const loadGTM = () => {
         if (window.dataLayer) return; // Already loaded
 
-        // Initialize dataLayer
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-            'gtm.start': new Date().getTime(),
-            event: 'gtm.js'
-        });
-
-        // Inject script
+        // Inject exact GTM script snippet
         const script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-MVSRLF5M';
+        script.innerHTML = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MVSRLF5M');`;
         document.head.appendChild(script);
+
+        // Inject noscript into body
+        const noscript = document.createElement('noscript');
+        const iframe = document.createElement('iframe');
+        iframe.src = "https://www.googletagmanager.com/ns.html?id=GTM-MVSRLF5M";
+        iframe.height = "0";
+        iframe.width = "0";
+        iframe.style.display = "none";
+        iframe.style.visibility = "hidden";
+        noscript.appendChild(iframe);
+        document.body.insertBefore(noscript, document.body.firstChild);
     };
 
     useEffect(() => {
@@ -79,7 +86,7 @@ export function CookieBanner() {
             
             <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5 }}>
                 We use cookies and similar tracking technologies (like Google Analytics) to improve your experience and measure site performance. 
-                By clicking "Accept All", you agree to our use of these technologies. Read our <Link to="/privacy" style={{ color: '#0071e3', textDecoration: 'none' }}>Privacy Policy</Link> for more details.
+                By clicking "Accept", you agree to our use of these technologies. (Note: Essential data like your logged-in session and local resume saves are required for the app to function and do not require consent.) Read our <Link to="/privacy" style={{ color: '#0071e3', textDecoration: 'none' }}>Privacy Policy</Link> for more details.
             </p>
             
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '4px' }}>
@@ -99,7 +106,7 @@ export function CookieBanner() {
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
-                    Decline Optional
+                    Decline
                 </button>
                 <button 
                     onClick={handleAccept}
@@ -117,7 +124,7 @@ export function CookieBanner() {
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#005bb5'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0071e3'}
                 >
-                    Accept All
+                    Accept
                 </button>
             </div>
         </div>

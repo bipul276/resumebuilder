@@ -5,8 +5,8 @@ export function Footer() {
     return (
         <footer style={{
             padding: '60px 24px',
-            borderTop: '1px solid rgba(255,255,255,0.05)',
-            backgroundColor: '#000', // matches app background
+            borderTop: '1px solid #3f3f46',
+            backgroundColor: '#0a0a0a',
             color: '#a1a1aa'
         }}>
             <div style={{

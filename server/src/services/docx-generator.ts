@@ -46,8 +46,8 @@ function getAlignment(align?: string): (typeof AlignmentType)[keyof typeof Align
  */
 export async function generateSandboxDOCX(sandboxData: SandboxData): Promise<Buffer> {
     const textElements = sandboxData.elements
-        .filter((el): el is SandboxElement & { type: 'text' } => el.type === 'text')
-        .sort((a, b) => a.style.top - b.style.top); // Sort by vertical position
+        .filter((el: any): el is SandboxElement & { type: 'text' } => el.type === 'text')
+        .sort((a: any, b: any) => a.style.top - b.style.top); // Sort by vertical position
 
     const paragraphs: Paragraph[] = [];
 
@@ -156,11 +156,11 @@ function sanitizeFont(fontFamily?: string): string {
  */
 export function extractPlainText(sandboxData: SandboxData): string {
     const textElements = sandboxData.elements
-        .filter((el): el is SandboxElement & { type: 'text' } => el.type === 'text')
-        .sort((a, b) => a.style.top - b.style.top);
+        .filter((el: any): el is SandboxElement & { type: 'text' } => el.type === 'text')
+        .sort((a: any, b: any) => a.style.top - b.style.top);
 
     return textElements
-        .map(el => el.content || '')
+        .map((el: any) => el.content || '')
         .filter(Boolean)
         .join('\n\n');
 }

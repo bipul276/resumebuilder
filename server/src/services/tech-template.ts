@@ -5,7 +5,7 @@ import type { ResumeData, SectionType, Certification, CustomSectionItem } from '
  */
 export function renderTechTemplate(data: ResumeData): string {
   const { personalInfo, summary, workExperience, education, skills, projects, certifications } = data;
-  const settings = data.settings;
+  const settings = data.settings || {};
 
   const fullName = `${personalInfo.firstName} ${personalInfo.lastName}`.trim();
   const sectionOrder = getSectionOrder(data);
@@ -28,7 +28,7 @@ export function renderTechTemplate(data: ResumeData): string {
           <span class="section-line"></span>
         </div>
         <div class="skills-grid">
-          ${skills.map(skill => `<span class="skill-badge">${escapeHtml(skill.name)}</span>`).join('')}
+          ${skills.map((skill: any) => `<span class="skill-badge">${escapeHtml(skill.name)}</span>`).join('')}
         </div>
       </section>
     ` : '';
@@ -38,7 +38,7 @@ export function renderTechTemplate(data: ResumeData): string {
           <span class="section-title">// experience</span>
           <span class="section-line"></span>
         </div>
-        ${workExperience.sort((a, b) => a.order - b.order).map(job => `
+        ${workExperience.sort((a: any, b: any) => a.order - b.order).map((job: any) => `
           <div class="card">
             <div class="card-header">
               <div>
@@ -49,7 +49,7 @@ export function renderTechTemplate(data: ResumeData): string {
             </div>
             ${job.bullets.length > 0 ? `
               <ul class="bullets">
-                ${job.bullets.map(bullet => `<li>${parseMarkdownLinks(escapeHtml(bullet))}</li>`).join('')}
+                ${job.bullets.map((bullet: any) => `<li>${parseMarkdownLinks(escapeHtml(bullet))}</li>`).join('')}
               </ul>
             ` : ''}
           </div>
@@ -62,7 +62,7 @@ export function renderTechTemplate(data: ResumeData): string {
           <span class="section-title">// projects</span>
           <span class="section-line"></span>
         </div>
-        ${projects.sort((a, b) => a.order - b.order).map(project => `
+        ${projects.sort((a: any, b: any) => a.order - b.order).map((project: any) => `
           <div class="card">
             <div class="card-header">
               <div>
@@ -73,7 +73,7 @@ export function renderTechTemplate(data: ResumeData): string {
             ${project.description ? `<p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 8px;">${parseMarkdownLinks(escapeHtml(project.description))}</p>` : ''}
             ${project.technologies.length > 0 ? `
               <div class="project-tech">
-                ${project.technologies.map(tech => `<span class="tech-tag">${escapeHtml(tech)}</span>`).join('')}
+                ${project.technologies.map((tech: any) => `<span class="tech-tag">${escapeHtml(tech)}</span>`).join('')}
               </div>
             ` : ''}
           </div>
@@ -86,7 +86,7 @@ export function renderTechTemplate(data: ResumeData): string {
           <span class="section-title">// education</span>
           <span class="section-line"></span>
         </div>
-        ${education.sort((a, b) => a.order - b.order).map(edu => `
+        ${education.sort((a: any, b: any) => a.order - b.order).map((edu: any) => `
           <div class="card">
             <div class="card-header">
               <div>
@@ -123,7 +123,7 @@ export function renderTechTemplate(data: ResumeData): string {
       default:
         if (typeof section === 'string' && section.startsWith('custom_')) {
           const customSecId = section.replace('custom_', '');
-          const customSec = data.customSections?.find(s => s.id === customSecId);
+          const customSec = data.customSections?.find((s: any) => s.id === customSecId);
           if (!customSec || customSec.items.length === 0) return '';
           return `
       <section class="section" data-section="custom-${escapeHtml(customSecId)}">

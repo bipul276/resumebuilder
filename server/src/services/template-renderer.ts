@@ -127,7 +127,7 @@ function groupSkillsByCategory(skills: Skill[]): Record<string, Skill[]> {
  */
 function renderCustomSectionHtml(data: ResumeData, sectionKey: string): string {
   const sectionId = sectionKey.replace('custom_', '');
-  const section = data.customSections?.find(s => s.id === sectionId);
+  const section = data.customSections?.find((s: any) => s.id === sectionId);
   if (!section || section.items.length === 0) return '';
   return `
     <section class="section" data-section="custom-${escapeHtml(sectionId)}">

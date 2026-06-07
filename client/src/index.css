@@ -627,6 +627,18 @@ body {
   }
 }
 
+/* Landing page hero responsive */
+@media (max-width: 900px) {
+  .hero-mockup {
+    display: none !important;
+  }
+}
+
+/* Pulse animation for live indicator */
+.pulse-dot {
+  animation: pulse 2s ease-in-out infinite;
+}
+
 /* ================================
    Section Order List
    ================================ */
